@@ -1,6 +1,6 @@
 - name: Take prompt input
   hosts: web
-  vars-prompt:
+  vars_prompt:
   - name: COURSE
     prompt: Please enter course name
   - name: TRAINER
