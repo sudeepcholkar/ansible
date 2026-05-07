@@ -1,0 +1,13 @@
+- name: Take prompt input
+  hosts: web
+  vars-prompt:
+  - name: COURSE
+    prompt: Please enter course name
+  - name: TRAINER
+    prompt: Please enter trainer name
+  - name: TARGET
+    prompt: Enter course completion target 
+  tasks: 
+  - name: print course information
+    ansible.builtin.debug:
+      msg: "Hi, I am doing {{COURSE}} and trainer is {{TRAINER}} I want to complete it in {{TARGET}}"
