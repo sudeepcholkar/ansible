@@ -3,7 +3,7 @@
   become: yes
   tasks:
   - name: print name
-    ansible.builtin.debug:
+    ansible.builtin.package:
       name: {{ item }}
       state: present
     loop:
