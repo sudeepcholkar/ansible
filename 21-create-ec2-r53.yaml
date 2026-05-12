@@ -9,7 +9,15 @@
     - mysql
     - backend
     - frontend
+    zone: cholkarx.online
   tasks:
+  - name: ansible to install boto3 and botocore
+    ansible.builtin.pip:
+      name:
+      - boto3
+      - botocore
+    executable: pip3.9
+    
   - name: create ec2 instances
     amazon.aws.ec2_instance:
       name: "{{ item }}"
@@ -23,3 +31,30 @@
   - name: print output
     ansible.builtin.debug:
       msg: "{{ ec2_instance }}"
+
+#Private IP R53
+  - name: create r53 records
+    amazon.aws.route53:
+      state: present
+      zone: "{{ zone }}"
+      record: "{{ item.item }}.{{ zone }}" #mysql.cholkarx.online
+      type: A 
+      ttl: 1
+      value: "{{ item.instances[0].private_ip_address }}"
+      wait: true
+      overwrite: true
+      loop: "{{ ec2_instance.results }}"
+
+#Public record
+  - name: create r53 records
+    amazon.aws.route53:
+      state: present
+      zone: "{{ zone }}"
+      record: "{{ zone }}" #mysql.cholkarx.online
+      type: A 
+      ttl: 1
+      value: "{{ item.instances[0].private_ip_address }}"
+      wait: true
+      overwrite: true
+      loop: "{{ ec2_instance.results }}"
+      when: item.item == "frontend"
